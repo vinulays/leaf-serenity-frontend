@@ -8,15 +8,34 @@ import {
 import Navbar from "./Components/Navbar/Navbar";
 import Login from "./Components/Login/Login";
 import Signup from "./Components/Signup/Signup";
+import PlantList from "./Components/PlantList/PlantList";
+import Plant from "./Components/Plant/Plant";
 
 function App() {
   return (
     <div className="App">
       <Router>
         <Routes>
-          <Route path="/signup" element={<Signup />} />
+          <Route
+            path="plants/:id"
+            element={
+              <>
+                <Navbar />
+                <Plant />
+              </>
+            }
+          />
+          <Route path="/signup" element={<Signup role="buyer" />} />
           <Route path="/login" element={<Login />} />
-          <Route path="/" element={<Navbar />} />
+          <Route
+            path="/"
+            element={
+              <>
+                <Navbar />
+                <PlantList />
+              </>
+            }
+          />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </Router>
