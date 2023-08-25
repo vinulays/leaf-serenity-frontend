@@ -1,10 +1,12 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { NavLink, useNavigate } from "react-router-dom";
 import axios from "axios";
 import toast, { Toaster } from "react-hot-toast";
+import { registerUser } from "../../features/auth/authActions";
+import { useDispatch, useSelector } from "react-redux";
 
-const Signup = (props) => {
+const Signup = () => {
   const {
     register,
     handleSubmit,
@@ -12,30 +14,29 @@ const Signup = (props) => {
     formState: { errors },
   } = useForm();
 
+  const { loading, userInfo, error, success } = useSelector(
+    (state) => state.auth
+  );
+
   const navigate = useNavigate();
+
+  const dispatch = useDispatch();
 
   const notify = () => toast.success("Account created successfully.");
 
-  // const handleFileUpload = async (file) => {};
-
-  const onSubmit = async (data) => {
-    axios
-      .post(`/signup/${props.role}`, data, {
-        headers: { "Content-Type": "application/json" },
-      })
-      .then((response) => {
-        notify();
-
-        setTimeout(() => {
-          navigate(`/login/${props.role}`, { replace: true });
-        }, 2000);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-
-    // console.log(typeof data.photo);
+  const onSubmit = (data) => {
+    data.role = "ROLE_USER";
+    dispatch(registerUser(data));
   };
+
+  useEffect(() => {
+    if (success) {
+      notify();
+      setTimeout(() => {
+        navigate("/login", { replace: true });
+      }, 2000);
+    }
+  }, [success, navigate, userInfo]);
 
   return (
     <div className="bg-[#F2E3DB]">
@@ -43,7 +44,7 @@ const Signup = (props) => {
         <Toaster />
         <div>
           <h1 className="text-center text-[32px] mb-10">
-            {`Create your ${props.role}  account`}.
+            {`Create your buyer  account`}.
           </h1>
         </div>
         <form onSubmit={handleSubmit(onSubmit)}>
@@ -394,164 +395,12 @@ const Signup = (props) => {
             </div>
           </div>
 
-          {props && props.role === "provider" && (
-            <div className="mt-6">
-              <div className="border-b border-gray-900/10 pb-12">
-                <h2 className="text-base font-semibold leading-7 text-gray-900">
-                  Job Information
-                </h2>
-                <p className="mt-1 text-sm leading-6 text-gray-600">
-                  Add what are your rates, qualifications and availability.
-                </p>
-
-                <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
-                  <div className="sm:col-span-2">
-                    <label
-                      htmlFor="region"
-                      className="block text-sm font-medium leading-6 text-gray-900"
-                    >
-                      Rate / hr (USD)
-                    </label>
-                    <div className="mt-2">
-                      <input
-                        {...register("rate", {
-                          required: {
-                            value: true,
-                            message: "Rate is required",
-                          },
-                          min: {
-                            value: 5,
-                            message: "Rate should be larger than $5/hr",
-                          },
-                        })}
-                        type="number"
-                        name="rate"
-                        id="rate"
-                        autoComplete="address-level1"
-                        className="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                      />
-                    </div>
-                    {errors.rate && (
-                      <span className="text-red-600 text-sm">
-                        {errors.rate.message}
-                      </span>
-                    )}
-                  </div>
-
-                  <div className="sm:col-span-2">
-                    <label
-                      htmlFor="country"
-                      className="block text-sm font-medium leading-6 text-gray-900"
-                    >
-                      Qualification
-                    </label>
-                    <div className="mt-2">
-                      <select
-                        {...register("qualification", {
-                          required: {
-                            value: true,
-                            message: "Qualification is required",
-                          },
-                        })}
-                        id="qualification"
-                        name="qualification"
-                        autoComplete="qualification"
-                        className="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6"
-                      >
-                        <option value="">Not Selected</option>
-                        <option value="Car Mechanic">Car Mechanic</option>
-                        <option value="Plumber">Plumber</option>
-                        <option value="A/C Mechanic">A/C Mechanic</option>
-                        <option value="Electrician">Electrician</option>
-                        <option value="Engineer">Engineer</option>
-                        <option value="Software Engineer">
-                          Software Engineer
-                        </option>
-                      </select>
-                    </div>
-                    {errors.qualification && (
-                      <span className="text-red-600 text-sm">
-                        {errors.qualification.message}
-                      </span>
-                    )}
-                  </div>
-
-                  <div className="sm:col-span-2">
-                    <label
-                      htmlFor="availability"
-                      className="block text-sm font-medium leading-6 text-gray-900"
-                    >
-                      Availability
-                    </label>
-                    <div className="mt-2">
-                      <select
-                        {...register("availability", {
-                          required: {
-                            value: true,
-                            message: "Availability is required",
-                          },
-                        })}
-                        id="availability"
-                        name="availability"
-                        autoComplete="availability"
-                        className="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6"
-                      >
-                        <option value="">Not Selected</option>
-                        <option value="Full time">Full time</option>
-                        <option value="Part time">Part time</option>
-                      </select>
-                    </div>
-                    {errors.availability && (
-                      <span className="text-red-600 text-sm">
-                        {errors.availability.message}
-                      </span>
-                    )}
-                  </div>
-
-                  <div className="sm:col-span-2">
-                    <label
-                      htmlFor="experience"
-                      className="block text-sm font-medium leading-6 text-gray-900"
-                    >
-                      No. of year experience
-                    </label>
-                    <div className="mt-2">
-                      <select
-                        {...register("experience", {
-                          required: {
-                            value: true,
-                            message: "Experience is required",
-                          },
-                        })}
-                        id="experience"
-                        name="experience"
-                        autoComplete="experience"
-                        className="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6"
-                      >
-                        <option value="">Not Selected</option>
-                        <option value="1 - 3 Years">1 - 3 Years</option>
-                        <option value="3 - 7 Years">3 - 7 Years</option>
-                        <option value="7 - 15 Years">7 - 15 Years</option>
-                        <option value="15+ Years">15+ Years</option>
-                      </select>
-                    </div>
-                    {errors.experience && (
-                      <span className="text-red-600 text-sm">
-                        {errors.experience.message}
-                      </span>
-                    )}
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
-
           <div className="mt-6 flex items-center justify-end gap-x-6">
             <button
               type="button"
               className="text-sm font-semibold leading-6 text-gray-900"
             >
-              <NavLink to={`/login/${props.role}`}>Cancel</NavLink>
+              <NavLink to={`/login`}>Cancel</NavLink>
             </button>
             <button
               type="submit"

@@ -8,6 +8,8 @@ import {
   HeartIcon,
   MagnifyingGlassIcon,
   UserIcon,
+  PlusCircleIcon,
+  MinusCircleIcon,
 } from "@heroicons/react/24/outline";
 import { NavLink } from "react-router-dom";
 
@@ -24,7 +26,7 @@ const products = [
     name: "Throwback Hip Bag",
     href: "#",
     color: "Salmon",
-    price: "$90.00",
+    price: "90.00",
     quantity: 1,
     imageSrc:
       "https://tailwindui.com/img/ecommerce-images/shopping-cart-page-04-product-01.jpg",
@@ -36,14 +38,13 @@ const products = [
     name: "Medium Stuff Satchel",
     href: "#",
     color: "Blue",
-    price: "$32.00",
+    price: "32.00",
     quantity: 1,
     imageSrc:
       "https://tailwindui.com/img/ecommerce-images/shopping-cart-page-04-product-02.jpg",
     imageAlt:
       "Front of satchel with blue canvas body, black straps and handle, drawstring top, and front zipper pouch.",
   },
-  // More products...
 ];
 
 function classNames(...classes) {
@@ -333,16 +334,24 @@ const Navbar = () => {
                                             {product.name}
                                           </a>
                                         </h3>
-                                        <p className="ml-4">{product.price}</p>
+                                        <p className="ml-4">${product.price}</p>
                                       </div>
                                       <p className="mt-1 text-sm text-gray-500">
                                         {product.color}
                                       </p>
                                     </div>
                                     <div className="flex flex-1 items-end justify-between text-sm">
-                                      <p className="text-gray-500">
-                                        Qty {product.quantity}
-                                      </p>
+                                      <div className="flex items-center gap-2">
+                                        <button>
+                                          <MinusCircleIcon className="h-5 w-5" />
+                                        </button>
+                                        <p className="text-gray-500">
+                                          {product.quantity}
+                                        </p>
+                                        <button>
+                                          <PlusCircleIcon className="h-5 w-5" />
+                                        </button>
+                                      </div>
 
                                       <div className="flex">
                                         <button
@@ -372,14 +381,14 @@ const Navbar = () => {
                         <div className="mt-6">
                           <a
                             href="#"
-                            className="flex items-center justify-center rounded-md border border-transparent bg-indigo-600 px-6 py-3 text-base font-medium text-white shadow-sm hover:bg-indigo-700"
+                            className="flex items-center justify-center rounded-md border border-transparent bg-[#E86A33] px-6 py-3 text-base font-medium text-white shadow-sm hover:bg-indigo-700"
                           >
                             Checkout
                           </a>
                         </div>
                         <div className="mt-6 flex justify-center text-center text-sm text-gray-500">
                           <p>
-                            or
+                            or{" "}
                             <button
                               type="button"
                               className="font-medium text-indigo-600 hover:text-indigo-500"
