@@ -33,11 +33,8 @@ export const userLogin = createAsyncThunk(
       localStorage.setItem("token", response.data.userToken);
       return response.data;
     } catch (error) {
-      if (error.response && error.response.data.message) {
-        return rejectWithValue(error.response.data.message);
-      } else {
-        return rejectWithValue(error.message);
-      }
+      console.log(error);
+      return rejectWithValue(error.response.data.error);
     }
   }
 );

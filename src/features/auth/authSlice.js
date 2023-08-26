@@ -12,6 +12,7 @@ const initialState = {
   userToken: null, // for storing the JWT
   error: null,
   success: false, // for monitoring the registration process.
+  isLogged: false, // for monitoring the login process
 };
 
 const authSlice = createSlice({
@@ -37,11 +38,12 @@ const authSlice = createSlice({
     },
     [userLogin.fulfilled]: (state, { payload }) => {
       state.loading = false;
-      console.log(payload);
       state.userInfo = payload.user;
       state.userToken = payload.userToken;
+      state.isLogged = true;
     },
     [userLogin.rejected]: (state, { payload }) => {
+      console.log(payload);
       state.loading = false;
       state.error = payload;
     },

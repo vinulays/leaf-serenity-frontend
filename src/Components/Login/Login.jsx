@@ -1,15 +1,17 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import { userLogin } from "../../features/auth/authActions";
 
 const Login = (props) => {
-  const { loading, error } = useSelector((state) => state.auth);
+  const { loading, error, isLogged } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const {
     register,
+    setError,
     handleSubmit,
     formState: { errors },
   } = useForm();
@@ -17,6 +19,26 @@ const Login = (props) => {
   const onSubmit = (data) => {
     dispatch(userLogin(data));
   };
+
+  useEffect(() => {
+    if (isLogged) {
+      navigate("/", { replace: true });
+    }
+  }, [isLogged, navigate]);
+
+  useEffect(() => {
+    if (error && error === "User not found") {
+      setError("email", {
+        type: "manual",
+        message: "Email not found",
+      });
+    } else if (error && error === "Incorrect password") {
+      setError("password", {
+        type: "manual",
+        message: "Incorrect password",
+      });
+    }
+  }, [error, setError]);
 
   return (
     <div className="lg:flex items-center min-h-full">
