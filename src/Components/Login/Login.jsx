@@ -1,15 +1,22 @@
 import React from "react";
 import { useForm } from "react-hook-form";
+import { useDispatch, useSelector } from "react-redux";
 import { NavLink } from "react-router-dom";
+import { userLogin } from "../../features/auth/authActions";
 
 const Login = (props) => {
+  const { loading, error } = useSelector((state) => state.auth);
+  const dispatch = useDispatch();
+
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm();
 
-  const onSubmit = () => {};
+  const onSubmit = (data) => {
+    dispatch(userLogin(data));
+  };
 
   return (
     <div className="lg:flex items-center min-h-full">
