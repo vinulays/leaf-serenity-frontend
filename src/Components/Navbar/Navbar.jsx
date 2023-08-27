@@ -12,6 +12,7 @@ import {
   MinusCircleIcon,
 } from "@heroicons/react/24/outline";
 import { NavLink } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 const navigation = [
   { name: "Shop", href: "/", current: true },
@@ -55,6 +56,8 @@ const Navbar = () => {
   const [expanded, setExpanded] = useState(false);
   const [open, setOpen] = useState(false);
 
+  const { isLogged, userInfo } = useSelector((state) => state.auth);
+
   const toggleSearchBar = () => {
     setExpanded(!expanded);
   };
@@ -85,7 +88,11 @@ const Navbar = () => {
                   </div>
                 </div>
                 <div className="sm:flex items-center gap-3 pr-2 hidden sm:pr-0 text-sm">
-                  <NavLink to="/login">Sign in</NavLink>
+                  {!isLogged ? (
+                    <NavLink to="/login">Sign in</NavLink>
+                  ) : (
+                    <NavLink to="/profile">My Profile</NavLink>
+                  )}
                   <Menu as="div" className="relative ml-3 hidden">
                     <div>
                       <Menu.Button className="relative flex rounded-full text-sm">

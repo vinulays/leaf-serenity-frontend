@@ -1,34 +1,12 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { MinusIcon, PlusIcon, StarIcon } from "@heroicons/react/20/solid";
 import { Disclosure } from "@headlessui/react";
 import { HeartIcon } from "@heroicons/react/24/outline";
 import { Toaster, toast } from "react-hot-toast";
+import { useDispatch, useSelector } from "react-redux";
+import { getPlantById } from "../../features/plants/plantsActions";
+import { useParams } from "react-router-dom";
 
-const product = {
-  name: "Blue Anthurium Plant",
-  price: "$192",
-  href: "#",
-  description:
-    "The Zip Tote Basket is the perfect midpoint between shopping tote and comfy backpack. With convertible straps, you can hand carry,should sling, or backpack this convenient and spacious bag. The zip top and durable canvas construction keeps your goods protected for all-day use.",
-  images: [
-    {
-      src: "https://tailwindui.com/img/ecommerce-images/product-page-02-secondary-product-shot.jpg",
-      alt: "Two each of gray, white, and black shirts laying flat.",
-    },
-    {
-      src: "https://tailwindui.com/img/ecommerce-images/product-page-02-tertiary-product-shot-01.jpg",
-      alt: "Model wearing plain black basic tee.",
-    },
-    {
-      src: "https://tailwindui.com/img/ecommerce-images/product-page-02-tertiary-product-shot-02.jpg",
-      alt: "Model wearing plain gray basic tee.",
-    },
-    {
-      src: "https://tailwindui.com/img/ecommerce-images/product-page-02-featured-product-shot.jpg",
-      alt: "Model wearing plain white basic tee.",
-    },
-  ],
-};
 const reviews = { href: "#", average: 4, totalCount: 117 };
 
 const notify = () => toast.success("Blue Anthurium Plant added to cart!");
@@ -39,6 +17,16 @@ function classNames(...classes) {
 }
 
 const Plant = () => {
+  const params = useParams();
+  const dispatch = useDispatch();
+  const { plantInfo, plantStatus } = useSelector((state) => state.plants);
+
+  useEffect(() => {
+    if (plantStatus === "idle") {
+      dispatch(getPlantById(params.id));
+    }
+  }, [plantStatus, dispatch, params.id]);
+
   return (
     <div className="bg-white">
       <Toaster />
@@ -49,7 +37,7 @@ const Plant = () => {
           <div className="lg:basis-1/2 shrink-0">
             <img
               className="rounded-lg object-cover w-full h-auto"
-              src="https://tailwindui.com/img/ecommerce-images/product-page-02-secondary-product-shot.jpg"
+              src={plantInfo && plantInfo.image}
               alt=""
               srcSet=""
             />
@@ -58,16 +46,16 @@ const Plant = () => {
           <div className="mt-4 lg:mt-0">
             <div className="lg:col-span-2 lg:border-r lg:border-gray-200 lg:pr-8">
               <h1 className="text-xl font-semibold tracking-tight text-gray-900 sm:text-3xl">
-                {product.name}
+                {plantInfo && plantInfo.name}
               </h1>
             </div>
             <h2 className="sr-only">Product information</h2>
             <p className="text-xl tracking-tight text-gray-900 mt-2">
-              {product.price}
+              ${plantInfo && plantInfo.price}
             </p>
 
             <div className="mt-4 text-base text-gray-600">
-              {product.description}
+              {plantInfo && plantInfo.description}
             </div>
 
             {/* Reviews */}
