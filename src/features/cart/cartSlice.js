@@ -2,6 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
   cartItems: [],
+  subTotal: 0,
 };
 
 const cartSlice = createSlice({
@@ -18,10 +19,12 @@ const cartSlice = createSlice({
       } else {
         state.cartItems.push({ ...action.payload, quantity: 1 });
       }
+      cartSlice.caseReducers.updateSubTotal(state);
     },
     incrementQuantity: (state, action) => {
       const item = state.cartItems.find((item) => item._id === action.payload);
       item.quantity++;
+      cartSlice.caseReducers.updateSubTotal(state);
     },
     decrementQuantity: (state, action) => {
       const item = state.cartItems.find((item) => item._id === action.payload);
@@ -30,13 +33,19 @@ const cartSlice = createSlice({
       } else {
         item.quantity--;
       }
+      cartSlice.caseReducers.updateSubTotal(state);
     },
     removeItem: (state, action) => {
       const removeItem = state.cartItems.filter(
         (item) => item._id !== action.payload
       );
       state.cartItems = removeItem;
-      console.log(state.cartItems);
+      cartSlice.caseReducers.updateSubTotal(state);
+    },
+    updateSubTotal: (state) => {
+      state.subTotal = state.cartItems.reduce((total, item) => {
+        return total + item.price * item.quantity;
+      }, 0);
     },
   },
 });
