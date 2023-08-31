@@ -1,16 +1,15 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { MinusIcon, PlusIcon, StarIcon } from "@heroicons/react/20/solid";
 import { Disclosure } from "@headlessui/react";
 import { HeartIcon } from "@heroicons/react/24/outline";
 import { Toaster, toast } from "react-hot-toast";
 import { useDispatch, useSelector } from "react-redux";
 import { getPlantById } from "../../features/plants/plantsActions";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
+import { addToCart } from "../../features/cart/cartSlice";
+import axios from "axios";
 
 const reviews = { href: "#", average: 4, totalCount: 117 };
-
-const notify = () => toast.success("Blue Anthurium Plant added to cart!");
-const notify2 = () => toast.success("Item added to favourites");
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
@@ -19,14 +18,31 @@ function classNames(...classes) {
 const Plant = () => {
   const params = useParams();
   const dispatch = useDispatch();
-  const { plantInfo, plantStatus } = useSelector((state) => state.plants);
+  const navigate = useNavigate();
+
+  const [plantInfo, setPlantInfo] = useState(null);
+  const { isLogged } = useSelector((state) => state.auth);
+
+  const notify = () => toast.success(`${plantInfo.name} Plant added to cart!`);
+  const notify2 = () => toast.success("Item added to favourites");
 
   useEffect(() => {
-    if (plantStatus === "idle") {
-      dispatch(getPlantById(params.id));
-    }
-  }, [plantStatus, dispatch, params.id]);
+    axios
+      .get(`/plants/${params.id}`, {
+        headers: { "Content-Type": "application/json" },
+      })
+      .then((response) => {
+        setPlantInfo(response.data);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }, [params]);
 
+  const submit = (plantInfo) => {
+    dispatch(addToCart(plantInfo));
+    notify();
+  };
   return (
     <div className="bg-white">
       <Toaster />
@@ -51,7 +67,7 @@ const Plant = () => {
             </div>
             <h2 className="sr-only">Product information</h2>
             <p className="text-xl tracking-tight text-gray-900 mt-2">
-              ${plantInfo && plantInfo.price}
+              ${plantInfo && plantInfo.price.toFixed(2)}
             </p>
 
             <div className="mt-4 text-base text-gray-600">
@@ -91,7 +107,7 @@ const Plant = () => {
                 <button
                   type="button"
                   className="rounded-md border border-transparent bg-[#E86A33] px-8 py-3 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-                  onClick={notify}
+                  onClick={() => submit(plantInfo && plantInfo)}
                 >
                   Add to bag
                 </button>

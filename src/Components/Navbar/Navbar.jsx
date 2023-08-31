@@ -12,40 +12,18 @@ import {
   MinusCircleIcon,
 } from "@heroicons/react/24/outline";
 import { NavLink } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  removeItem,
+  incrementQuantity,
+  decrementQuantity,
+} from "../../features/cart/cartSlice";
 
 const navigation = [
   { name: "Shop", href: "/", current: true },
   { name: "Plant Care", href: "#", current: false },
   { name: "About", href: "#", current: false },
   { name: "Contact Us", href: "#", current: false },
-];
-
-const products = [
-  {
-    id: 1,
-    name: "Throwback Hip Bag",
-    href: "#",
-    color: "Salmon",
-    price: "90.00",
-    quantity: 1,
-    imageSrc:
-      "https://tailwindui.com/img/ecommerce-images/shopping-cart-page-04-product-01.jpg",
-    imageAlt:
-      "Salmon orange fabric pouch with match zipper, gray zipper pull, and adjustable hip belt.",
-  },
-  {
-    id: 2,
-    name: "Medium Stuff Satchel",
-    href: "#",
-    color: "Blue",
-    price: "32.00",
-    quantity: 1,
-    imageSrc:
-      "https://tailwindui.com/img/ecommerce-images/shopping-cart-page-04-product-02.jpg",
-    imageAlt:
-      "Front of satchel with blue canvas body, black straps and handle, drawstring top, and front zipper pouch.",
-  },
 ];
 
 function classNames(...classes) {
@@ -57,6 +35,9 @@ const Navbar = () => {
   const [open, setOpen] = useState(false);
 
   const { isLogged, userInfo } = useSelector((state) => state.auth);
+  const { cartItems } = useSelector((state) => state.cart);
+
+  const dispatch = useDispatch();
 
   const toggleSearchBar = () => {
     setExpanded(!expanded);
@@ -319,16 +300,26 @@ const Navbar = () => {
 
                         <div className="mt-8">
                           <div className="flow-root">
+                            {cartItems.length === 0 && (
+                              <div className="mt-3 flex flex-col gap-7 items-center">
+                                <img
+                                  src="https://cdn-icons-png.flaticon.com/512/4555/4555971.png"
+                                  alt=""
+                                  className="h-auto mr-4 max-w-[40%]"
+                                />
+                                <span>No items in the cart!</span>
+                              </div>
+                            )}
                             <ul
                               role="list"
                               className="-my-6 divide-y divide-gray-200"
                             >
-                              {products.map((product) => (
+                              {cartItems.map((product) => (
                                 <li key={product.id} className="flex py-6">
                                   <div className="h-24 w-24 flex-shrink-0 overflow-hidden rounded-md border border-gray-200">
                                     <img
-                                      src={product.imageSrc}
-                                      alt={product.imageAlt}
+                                      src={product.image}
+                                      alt="cart item plant"
                                       className="h-full w-full object-cover object-center"
                                     />
                                   </div>
@@ -341,7 +332,9 @@ const Navbar = () => {
                                             {product.name}
                                           </a>
                                         </h3>
-                                        <p className="ml-4">${product.price}</p>
+                                        <p className="ml-4">
+                                          ${product.price.toFixed(2)}
+                                        </p>
                                       </div>
                                       <p className="mt-1 text-sm text-gray-500">
                                         {product.color}
@@ -349,13 +342,25 @@ const Navbar = () => {
                                     </div>
                                     <div className="flex flex-1 items-end justify-between text-sm">
                                       <div className="flex items-center gap-2">
-                                        <button>
+                                        <button
+                                          onClick={() =>
+                                            dispatch(
+                                              decrementQuantity(product._id)
+                                            )
+                                          }
+                                        >
                                           <MinusCircleIcon className="h-5 w-5" />
                                         </button>
                                         <p className="text-gray-500">
                                           {product.quantity}
                                         </p>
-                                        <button>
+                                        <button
+                                          onClick={() =>
+                                            dispatch(
+                                              incrementQuantity(product._id)
+                                            )
+                                          }
+                                        >
                                           <PlusCircleIcon className="h-5 w-5" />
                                         </button>
                                       </div>
@@ -364,6 +369,9 @@ const Navbar = () => {
                                         <button
                                           type="button"
                                           className="font-medium text-indigo-600 hover:text-indigo-500"
+                                          onClick={() =>
+                                            dispatch(removeItem(product._id))
+                                          }
                                         >
                                           Remove
                                         </button>

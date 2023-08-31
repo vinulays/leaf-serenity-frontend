@@ -41,7 +41,7 @@ const PlantList = () => {
                   {/* <p className="mt-1 text-sm text-gray-400">{product.color}</p> */}
                 </div>
                 <p className="text-sm font-medium text-[#F2E3DB]">
-                  $ {plant.price}
+                  $ {plant.price.toFixed(2)}
                 </p>
               </div>
             </NavLink>
