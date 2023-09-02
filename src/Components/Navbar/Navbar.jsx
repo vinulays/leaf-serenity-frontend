@@ -1,15 +1,22 @@
 import React, { useState } from "react";
 import { Fragment } from "react";
-import { Dialog, Disclosure, Menu, Transition } from "@headlessui/react";
+import {
+  Dialog,
+  Disclosure,
+  Listbox,
+  Menu,
+  Transition,
+} from "@headlessui/react";
 import {
   Bars3Icon,
   XMarkIcon,
   ShoppingBagIcon,
-  HeartIcon,
   MagnifyingGlassIcon,
   UserIcon,
   PlusCircleIcon,
   MinusCircleIcon,
+  ChevronDownIcon,
+  CheckIcon,
 } from "@heroicons/react/24/outline";
 import { NavLink } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
@@ -26,51 +33,118 @@ const navigation = [
   { name: "Contact Us", href: "#", current: false },
 ];
 
+const categories = [
+  { name: "All Categories" },
+  { name: "Gaming Laptops" },
+  { name: "Monitors" },
+  { name: "VGA Cards" },
+];
+
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
 }
 
 const Navbar = () => {
-  const [expanded, setExpanded] = useState(false);
   const [open, setOpen] = useState(false);
 
-  const { isLogged, userInfo } = useSelector((state) => state.auth);
+  const { isLogged } = useSelector((state) => state.auth);
   const { cartItems, subTotal } = useSelector((state) => state.cart);
+
+  const [selected, setSelected] = useState(categories[0]);
 
   const dispatch = useDispatch();
 
-  const toggleSearchBar = () => {
-    setExpanded(!expanded);
-  };
-
   return (
     <div>
-      <Disclosure as="nav" className="bg-[#F2E3DB]">
+      <Disclosure as="nav">
         {({ open }) => (
           <>
-            <div className="mx-auto max-w-full px-2 sm:px-6 lg:px-[4rem]">
+            <div className="mx-auto max-w-full px-2 sm:px-6 lg:px-[8rem] lg:mt-2">
               <div className="relative flex h-16 items-center justify-between">
-                <NavLink to="/">
-                  <strong className="text-[#41644A]">LEAF</strong> SERENITY
-                </NavLink>
+                <div>
+                  <NavLink to="/" className="flex gap-1">
+                    <strong className="text-[#41644A]">LEAF</strong> SERENITY
+                  </NavLink>
+                </div>
 
-                <div className="hidden sm:ml-6 md:block">
-                  <div className="flex space-x-4">
-                    {navigation.map((item) => (
-                      <NavLink
-                        key={item.name}
-                        to={item.href}
-                        className={"rounded-md px-3 py-2 text-sm font-medium"}
-                        aria-current={item.current ? "page" : undefined}
-                      >
-                        {item.name}
-                      </NavLink>
-                    ))}
+                <div className="w-[50%]">
+                  <div className="relative">
+                    <MagnifyingGlassIcon className="h-5 w-5 absolute top-[13px]  left-4 pointer-events-none" />
+                    <input
+                      type="text"
+                      placeholder="Searching for..."
+                      className="w-full py-3 px-10 rounded-3xl border-gray-300 border text-sm focus:outline-none"
+                    />
+                    <div className="absolute top-0 right-0">
+                      <Listbox value={selected} onChange={setSelected}>
+                        <div className="relative z-10">
+                          <Listbox.Button className="relative w-[175px] cursor-pointer border border-gray-300 rounded-r-3xl bg-gray-200 py-3 pl-3 pr-10 text-left  sm:text-sm">
+                            <span className="block truncate">
+                              {selected.name}
+                            </span>
+                            <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
+                              <ChevronDownIcon
+                                className="h-5 w-5 text-gray-400"
+                                aria-hidden="true"
+                              />
+                            </span>
+                          </Listbox.Button>
+                          <Transition
+                            as={Fragment}
+                            leave="transition ease-in duration-100"
+                            leaveFrom="opacity-100"
+                            leaveTo="opacity-0"
+                          >
+                            <Listbox.Options className="absolute mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
+                              {categories.map((category, categoryIdx) => (
+                                <Listbox.Option
+                                  key={categoryIdx}
+                                  className={({ active }) =>
+                                    `relative cursor-default select-none py-2 pl-10 pr-4 ${
+                                      active
+                                        ? "bg-amber-100 text-amber-900"
+                                        : "text-gray-900"
+                                    }`
+                                  }
+                                  value={category}
+                                >
+                                  {({ selected }) => (
+                                    <>
+                                      <span
+                                        className={`block truncate ${
+                                          selected
+                                            ? "font-medium"
+                                            : "font-normal"
+                                        }`}
+                                      >
+                                        {category.name}
+                                      </span>
+                                      {selected ? (
+                                        <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-amber-600">
+                                          <CheckIcon
+                                            className="h-5 w-5"
+                                            aria-hidden="true"
+                                          />
+                                        </span>
+                                      ) : null}
+                                    </>
+                                  )}
+                                </Listbox.Option>
+                              ))}
+                            </Listbox.Options>
+                          </Transition>
+                        </div>
+                      </Listbox>
+                    </div>
                   </div>
                 </div>
-                <div className="sm:flex items-center gap-3 pr-2 hidden sm:pr-0 text-sm">
+                <div className="sm:flex items-center gap-4 pr-2 hidden sm:pr-0 text-sm">
                   {!isLogged ? (
-                    <NavLink to="/login">Sign in</NavLink>
+                    <NavLink to="/login">
+                      <button className="rounded-full bg-gray-200 p-2">
+                        <UserIcon className="h-6 w-6 rounded-full" />
+                      </button>
+                    </NavLink>
                   ) : (
                     <NavLink to="/profile">My Profile</NavLink>
                   )}
@@ -80,7 +154,7 @@ const Navbar = () => {
                         <span className="absolute -inset-1.5" />
                         <span className="sr-only">Open user menu</span>
 
-                        <UserIcon className="h-5 w-5" aria-hidden="true" />
+                        <UserIcon className="h-6 w-6" aria-hidden="true" />
                       </Menu.Button>
                     </div>
                     <Transition
@@ -96,7 +170,7 @@ const Navbar = () => {
                         <Menu.Item>
                           {({ active }) => (
                             <a
-                              href="#"
+                              href="/"
                               className={classNames(
                                 active ? "bg-gray-100" : "",
                                 "block px-4 py-2 text-sm text-gray-700"
@@ -109,7 +183,7 @@ const Navbar = () => {
                         <Menu.Item>
                           {({ active }) => (
                             <a
-                              href="#"
+                              href="/"
                               className={classNames(
                                 active ? "bg-gray-100" : "",
                                 "block px-4 py-2 text-sm text-gray-700"
@@ -122,7 +196,7 @@ const Navbar = () => {
                         <Menu.Item>
                           {({ active }) => (
                             <a
-                              href="#"
+                              href="/"
                               className={classNames(
                                 active ? "bg-gray-100" : "",
                                 "block px-4 py-2 text-sm text-gray-700"
@@ -135,64 +209,20 @@ const Navbar = () => {
                       </Menu.Items>
                     </Transition>
                   </Menu>
-                  <button type="button" className="relative rounded-full">
-                    <span className="absolute -inset-1.5" />
-                    <span className="sr-only">Wishlist</span>
-                    <HeartIcon className="h-5 w-5" aria-hidden="true" />
-                  </button>
+
                   <button
                     type="button"
                     onClick={() => setOpen(true)}
-                    className="relative rounded-full"
+                    className="relative rounded-full bg-gray-200 p-2"
                   >
                     <span className="absolute -inset-1.5" />
                     <span className="sr-only">View notifications</span>
-                    <ShoppingBagIcon className="h-5 w-5" aria-hidden="true" />
-                  </button>
-                  <div className="relative rounded-full flex gap-3">
-                    {/* {expanded && (
-                      <div className="transition-all duration-300 ease-in-out">
-                        <input
-                          type="text"
-                          className="outline-none px-2 rounded-lg text-sm"
-                        />
-                      </div>
-                    )} */}
-                    <Transition
-                      show={expanded}
-                      enter="transition ease-in-out duration-300 transform"
-                      enterFrom="scale-0"
-                      enterTo="scale-100"
-                      leave="transition ease-in-out duration-300 transform"
-                      leaveFrom="scale-100"
-                      leaveTo="scale-0"
-                    >
-                      {(ref) => (
-                        <div ref={ref} className="search-bar">
-                          <input
-                            type="text"
-                            className="outline-none px-2 rounded-lg text-sm"
-                          />
-                        </div>
-                      )}
-                    </Transition>
-                    <button
-                      type="button"
-                      className={`relative rounded-full ${
-                        expanded ? "expanded" : ""
-                      }`}
-                      onClick={toggleSearchBar}
-                    >
-                      <span className="absolute -inset-1.5" />
-                      <span className="sr-only">Search bar</span>
-                      <MagnifyingGlassIcon
-                        className="h-5 w-5"
-                        aria-hidden="true"
-                      />
-                    </button>
-                  </div>
+                    <span className="absolute -top-2 -right-2 h-5 w-5 rounded-full bg-red-500 flex justify-center items-center items p-1 text-white">
+                      <span>{cartItems.length}</span>
+                    </span>
 
-                  {/* Profile dropdown */}
+                    <ShoppingBagIcon className="h-6 w-6" aria-hidden="true" />
+                  </button>
 
                   <div className=" inset-y-0  flex items-center md:hidden">
                     {/* Mobile menu button*/}
@@ -310,10 +340,7 @@ const Navbar = () => {
                                 <span>No items in the cart!</span>
                               </div>
                             )}
-                            <ul
-                              role="list"
-                              className="-my-6 divide-y divide-gray-200"
-                            >
+                            <ul className="-my-6 divide-y divide-gray-200">
                               {cartItems.map((product) => (
                                 <li key={product.id} className="flex py-6">
                                   <div className="h-24 w-24 flex-shrink-0 overflow-hidden rounded-md border border-gray-200">
@@ -395,7 +422,7 @@ const Navbar = () => {
                         </p>
                         <div className="mt-6">
                           <a
-                            href="#"
+                            href="/"
                             className="flex items-center justify-center rounded-md border border-transparent bg-[#E86A33] px-6 py-3 text-base font-medium text-white shadow-sm hover:bg-indigo-700"
                           >
                             Checkout

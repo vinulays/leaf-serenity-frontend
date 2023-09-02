@@ -30,19 +30,16 @@ const PlantList = () => {
                   className="h-full w-full object-cover object-center lg:h-full lg:w-full"
                 />
               </div>
-              <div className="mt-4 flex justify-between">
+              <div className="mt-4 flex flex-col gap-2">
                 <div>
-                  <h3 className="text-sm text-[#F2E3DB]">
+                  <h3 className="text-sm ">
                     <span>
                       <span aria-hidden="true" className="absolute inset-0" />
                       {plant.name}
                     </span>
                   </h3>
-                  {/* <p className="mt-1 text-sm text-gray-400">{product.color}</p> */}
                 </div>
-                <p className="text-sm font-medium text-[#F2E3DB]">
-                  $ {plant.price.toFixed(2)}
-                </p>
+                <p className="text-sm font-bold ">${plant.price.toFixed(2)}</p>
               </div>
             </NavLink>
           ))}

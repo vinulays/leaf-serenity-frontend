@@ -9,12 +9,11 @@
 
 body {
   margin: 0;
-  background-color: #41644a;
+  /* background-color: #41644a; */
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
-    monospace;
+.swiper-pagination-bullet-active {
+  background-color: #000 !important;
 }

@@ -10,6 +10,7 @@ import Login from "./Components/Login/Login";
 import Signup from "./Components/Signup/Signup";
 import PlantList from "./Components/PlantList/PlantList";
 import Plant from "./Components/Plant/Plant";
+import Carousel from "./Components/Carousel/Carousel";
 
 function App() {
   return (
@@ -32,6 +33,7 @@ function App() {
             element={
               <>
                 <Navbar />
+                <Carousel />
                 <PlantList />
               </>
             }
