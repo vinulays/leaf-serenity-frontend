@@ -4,8 +4,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { NavLink, useNavigate } from "react-router-dom";
 import { userLogin } from "../../features/auth/authActions";
 
-const Login = (props) => {
-  const { loading, error, isLogged } = useSelector((state) => state.auth);
+const Login = ({ setOpen2 }) => {
+  const { error, isLogged } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -22,7 +22,8 @@ const Login = (props) => {
 
   useEffect(() => {
     if (isLogged) {
-      navigate("/", { replace: true });
+      // navigate("/", { replace: true });
+      setOpen2(false);
     }
   }, [isLogged, navigate]);
 
@@ -41,8 +42,8 @@ const Login = (props) => {
   }, [error, setError]);
 
   return (
-    <div className="lg:flex items-center min-h-full">
-      <div className="flex basis-1/2 min-h-full flex-col justify-center px-6 py-12 lg:px-8 h-screen text-gray-900 bg-[#F2E3DB]">
+    <div className="items-center min-h-full">
+      <div className="flex min-h-full flex-col justify-center px-6 py-12 lg:px-8  text-gray-900">
         <div className="sm:mx-auto sm:w-full sm:max-w-sm">
           <h2 className="mt-10 text-start text-2xl  leading-9 tracking-tight ">
             Welcome back
@@ -134,15 +135,6 @@ const Login = (props) => {
               Register now
             </NavLink>
           </p>
-        </div>
-      </div>
-      <div className="basis-1/2 hidden lg:block">
-        <div>
-          <img
-            className="h-screen object-cover"
-            src="https://images.unsplash.com/photo-1547575824-440930b53b4d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1171&q=80"
-            alt="login leaf"
-          />
         </div>
       </div>
     </div>

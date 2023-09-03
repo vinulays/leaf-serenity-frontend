@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { Fragment } from "react";
 import {
   Dialog,
@@ -25,6 +25,7 @@ import {
   incrementQuantity,
   decrementQuantity,
 } from "../../features/cart/cartSlice";
+import Login from "../Login/Login";
 
 const navigation = [
   { name: "Shop", href: "/", current: true },
@@ -46,8 +47,11 @@ function classNames(...classes) {
 
 const Navbar = () => {
   const [open, setOpen] = useState(false);
+  const [open2, setOpen2] = useState(false);
 
-  const { isLogged } = useSelector((state) => state.auth);
+  const cancelButtonRef = useRef(null);
+
+  const { isLogged, userInfo } = useSelector((state) => state.auth);
   const { cartItems, subTotal } = useSelector((state) => state.cart);
 
   const [selected, setSelected] = useState(categories[0]);
@@ -140,75 +144,96 @@ const Navbar = () => {
                 </div>
                 <div className="sm:flex items-center gap-4 pr-2 hidden sm:pr-0 text-sm">
                   {!isLogged ? (
-                    <NavLink to="/login">
-                      <button className="rounded-full bg-gray-200 p-2">
-                        <UserIcon className="h-6 w-6 rounded-full" />
-                      </button>
-                    </NavLink>
-                  ) : (
-                    <NavLink to="/profile">My Profile</NavLink>
-                  )}
-                  <Menu as="div" className="relative ml-3 hidden">
-                    <div>
-                      <Menu.Button className="relative flex rounded-full text-sm">
-                        <span className="absolute -inset-1.5" />
-                        <span className="sr-only">Open user menu</span>
-
-                        <UserIcon className="h-6 w-6" aria-hidden="true" />
-                      </Menu.Button>
-                    </div>
-                    <Transition
-                      as={Fragment}
-                      enter="transition ease-out duration-100"
-                      enterFrom="transform opacity-0 scale-95"
-                      enterTo="transform opacity-100 scale-100"
-                      leave="transition ease-in duration-75"
-                      leaveFrom="transform opacity-100 scale-100"
-                      leaveTo="transform opacity-0 scale-95"
+                    // <NavLink to="/login">
+                    <button
+                      className="rounded-full bg-gray-200 p-2"
+                      onClick={() => setOpen2(true)}
                     >
-                      <Menu.Items className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-[#F2E3DB] py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
-                        <Menu.Item>
-                          {({ active }) => (
-                            <a
-                              href="/"
-                              className={classNames(
-                                active ? "bg-gray-100" : "",
-                                "block px-4 py-2 text-sm text-gray-700"
+                      <UserIcon className="h-6 w-6 rounded-full" />
+                    </button>
+                  ) : (
+                    // </NavLink>
+                    <Menu as="div" className="relative ml-3">
+                      <div>
+                        <Menu.Button className="relative flex rounded-full bg-gray-200 p-2 text-sm">
+                          <span className="absolute -inset-1.5" />
+                          <span className="sr-only">Open user menu</span>
+
+                          <UserIcon className="h-6 w-6" aria-hidden="true" />
+                        </Menu.Button>
+                      </div>
+                      <Transition
+                        as={Fragment}
+                        enter="transition ease-out duration-100"
+                        enterFrom="transform opacity-0 scale-95"
+                        enterTo="transform opacity-100 scale-100"
+                        leave="transition ease-in duration-75"
+                        leaveFrom="transform opacity-100 scale-100"
+                        leaveTo="transform opacity-0 scale-95"
+                      >
+                        <Menu.Items className="absolute right-0 z-10 mt-2 w-48 origin-top rounded-md bg-[#F2E3DB] py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+                          <Menu.Item>
+                            {({ active }) => (
+                              <a
+                                href="/"
+                                className={classNames(
+                                  active ? "bg-gray-100" : "",
+                                  "block px-4 py-2 text-sm text-gray-700"
+                                )}
+                              >
+                                Profile
+                              </a>
+                            )}
+                          </Menu.Item>
+                          {userInfo && userInfo.role === "ROLE_ADMIN" && (
+                            <Menu.Item>
+                              {({ active }) => (
+                                <a
+                                  href="/"
+                                  className={classNames(
+                                    active ? "bg-gray-100" : "",
+                                    "block px-4 py-2 text-sm text-gray-700"
+                                  )}
+                                >
+                                  Orders
+                                </a>
                               )}
-                            >
-                              Your Profile
-                            </a>
+                            </Menu.Item>
                           )}
-                        </Menu.Item>
-                        <Menu.Item>
-                          {({ active }) => (
-                            <a
-                              href="/"
-                              className={classNames(
-                                active ? "bg-gray-100" : "",
-                                "block px-4 py-2 text-sm text-gray-700"
+
+                          {userInfo && userInfo.role === "ROLE_USER" && (
+                            <Menu.Item>
+                              {({ active }) => (
+                                <a
+                                  href="/"
+                                  className={classNames(
+                                    active ? "bg-gray-100" : "",
+                                    "block px-4 py-2 text-sm text-gray-700"
+                                  )}
+                                >
+                                  Wishlist
+                                </a>
                               )}
-                            >
-                              Settings
-                            </a>
+                            </Menu.Item>
                           )}
-                        </Menu.Item>
-                        <Menu.Item>
-                          {({ active }) => (
-                            <a
-                              href="/"
-                              className={classNames(
-                                active ? "bg-gray-100" : "",
-                                "block px-4 py-2 text-sm text-gray-700"
-                              )}
-                            >
-                              Sign out
-                            </a>
-                          )}
-                        </Menu.Item>
-                      </Menu.Items>
-                    </Transition>
-                  </Menu>
+
+                          <Menu.Item>
+                            {({ active }) => (
+                              <a
+                                href="/"
+                                className={classNames(
+                                  active ? "bg-gray-100" : "",
+                                  "block px-4 py-2 text-sm text-gray-700"
+                                )}
+                              >
+                                Sign out
+                              </a>
+                            )}
+                          </Menu.Item>
+                        </Menu.Items>
+                      </Transition>
+                    </Menu>
+                  )}
 
                   <button
                     type="button"
@@ -446,6 +471,48 @@ const Navbar = () => {
                   </Dialog.Panel>
                 </Transition.Child>
               </div>
+            </div>
+          </div>
+        </Dialog>
+      </Transition.Root>
+
+      {/* Login form */}
+      <Transition.Root show={open2} as={Fragment}>
+        <Dialog
+          as="div"
+          className="relative z-10"
+          initialFocus={cancelButtonRef}
+          onClose={setOpen2}
+        >
+          <Transition.Child
+            as={Fragment}
+            enter="ease-out duration-300"
+            enterFrom="opacity-0"
+            enterTo="opacity-100"
+            leave="ease-in duration-200"
+            leaveFrom="opacity-100"
+            leaveTo="opacity-0"
+          >
+            <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
+          </Transition.Child>
+
+          <div className="fixed inset-0 z-10 overflow-y-auto">
+            <div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
+              <Transition.Child
+                as={Fragment}
+                enter="ease-out duration-300"
+                enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                enterTo="opacity-100 translate-y-0 sm:scale-100"
+                leave="ease-in duration-200"
+                leaveFrom="opacity-100 translate-y-0 sm:scale-100"
+                leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+              >
+                <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg">
+                  <div className="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
+                    <Login setOpen2={setOpen2} />
+                  </div>
+                </Dialog.Panel>
+              </Transition.Child>
             </div>
           </div>
         </Dialog>
